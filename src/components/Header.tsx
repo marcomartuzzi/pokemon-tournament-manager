@@ -86,9 +86,51 @@ const Header: React.FC = () => {
                                 e.currentTarget.style.transform = 'translateY(0)';
                             }}
                         >
-                            🏠 Dashboard
+                            🏅 Classifica Generale
                         </Link>
                     </li>
+                    <li>
+                        <Link
+                            to="/regolamento"
+                            style={{
+                                ...navLinkStyle,
+                                color: 'white',
+                                backgroundColor: 'rgba(255,255,255,0.15)'
+                            }}
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.25)';
+                                e.currentTarget.style.transform = 'translateY(-2px)';
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.15)';
+                                e.currentTarget.style.transform = 'translateY(0)';
+                            }}
+                        >
+                            📋 Regolamento
+                        </Link>
+                    </li>
+                    {user && (
+                        <li>
+                            <Link
+                                to="/tournaments"
+                                style={{
+                                    ...navLinkStyle,
+                                    color: 'white',
+                                    backgroundColor: 'rgba(255,255,255,0.15)'
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.25)';
+                                    e.currentTarget.style.transform = 'translateY(-2px)';
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.15)';
+                                    e.currentTarget.style.transform = 'translateY(0)';
+                                }}
+                            >
+                                🏆 Tornei
+                            </Link>
+                        </li>
+                    )}
                     {user && user.isAdmin && (
                         <li>
                             <Link 

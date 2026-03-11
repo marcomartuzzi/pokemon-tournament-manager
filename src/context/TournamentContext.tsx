@@ -18,6 +18,8 @@ interface TournamentContextType {
     updateMatchResult: (tournamentId: string, matchId: string, result: Match) => void;
     /** Azzera tutti i risultati di un torneo */
     resetTournament: (tournamentId: string) => void;
+    /** Imposta o rimuove lo spareggio di un torneo */
+    updateTiebreaker: (tournamentId: string, tiebreaker: { participant1: string; participant2: string; winner: string } | null) => void;
     /** Ottieni la classifica generale (tutti i tornei) */
     getLeaderboard: () => Participant[];
 }
@@ -88,8 +90,19 @@ export const TournamentProvider: React.FC<TournamentProviderProps> = ({ children
                 tournament.id === tournamentId
                     ? {
                           ...tournament,
+                          tiebreaker: undefined,
                           matches: tournament.matches.map((match) => ({ ...match, winner: '' })),
                       }
+                    : tournament
+            )
+        );
+    };
+
+    const updateTiebreaker = (tournamentId: string, tiebreaker: { participant1: string; participant2: string; winner: string } | null) => {
+        setTournaments((prev) =>
+            prev.map((tournament) =>
+                tournament.id === tournamentId
+                    ? { ...tournament, tiebreaker: tiebreaker ?? undefined }
                     : tournament
             )
         );
@@ -117,7 +130,7 @@ export const TournamentProvider: React.FC<TournamentProviderProps> = ({ children
     };
 
     return (
-        <TournamentContext.Provider value={{ tournaments, addTournament, updateMatchResult, resetTournament, getLeaderboard }}>
+        <TournamentContext.Provider value={{ tournaments, addTournament, updateMatchResult, resetTournament, updateTiebreaker, getLeaderboard }}>
             {children}
         </TournamentContext.Provider>
     );

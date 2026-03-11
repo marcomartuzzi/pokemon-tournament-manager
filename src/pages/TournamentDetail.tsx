@@ -1,6 +1,8 @@
 import React, { useContext, useMemo, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { TournamentContext } from '../context/TournamentContext';
+import { useTournamentContext } from '../context/TournamentContext';
+import { energyImageMap } from '../utils/energyImages';
 
 interface PlayerStats {
   wins: number;
@@ -26,6 +28,7 @@ const TournamentDetail: React.FC = () => {
     }
 
     const { tournaments, updateMatchResult } = context;
+    const { updateTiebreaker } = useTournamentContext();
     const tournament = tournaments.find(t => t.id === id);
 
     if (!tournament) {
@@ -97,14 +100,38 @@ const TournamentDetail: React.FC = () => {
 
     // Memoizza classifica ordinata per vittorie (performance optimization)
     const leaderboard = useMemo(() => {
-        return participants
+        const sorted = participants
             .map(p => ({
                 name: p,
                 wins: stats[p].wins,
                 losses: stats[p].losses
             }))
-            .sort((a, b) => b.wins - a.wins);
-    }, [participants, stats]);
+            .sort((a, b) => b.wins - a.wins || a.name.localeCompare(b.name));
+
+        // Se c'è uno spareggio impostato, il vincitore sale in prima posizione
+        if (tournament.tiebreaker?.winner) {
+            const tbWinner = tournament.tiebreaker.winner;
+            const idx = sorted.findIndex(p => p.name === tbWinner);
+            if (idx > 0) {
+                const [winner] = sorted.splice(idx, 1);
+                sorted.unshift(winner);
+            }
+        }
+        return sorted;
+    }, [participants, stats, tournament.tiebreaker]);
+
+    const allPlayed = tournament.matches.every(m => m.winner !== '');
+
+    // Rileva giocatori in parità in cima (solo quando tutte le partite sono giocate)
+    const tiedTopPlayers = useMemo(() => {
+        if (!allPlayed) return [];
+        if (leaderboard.length < 2) return [];
+        // Se c'è già uno spareggio impostato, non mostrare più il selettore
+        if (tournament.tiebreaker?.winner) return [];
+        const topWins = leaderboard[0].wins;
+        const tied = leaderboard.filter(p => p.wins === topWins);
+        return tied.length >= 2 ? tied : [];
+    }, [allPlayed, leaderboard, tournament.tiebreaker]);
 
     return (
         <main style={{ padding: '20px' }} aria-labelledby="tournament-title">
@@ -130,9 +157,18 @@ const TournamentDetail: React.FC = () => {
                         <dt style={{ display: 'inline', fontWeight: 'bold' }}>👤 Capopalestra:</dt>
                         <dd style={{ display: 'inline', marginLeft: '8px' }}>{tournament.leader}</dd>
                     </div>
-                    <div style={{ marginBottom: '8px' }}>
-                        <dt style={{ display: 'inline', fontWeight: 'bold' }}>⚡ Energia:</dt>
-                        <dd style={{ display: 'inline', marginLeft: '8px' }}>{tournament.energia}</dd>
+                    <div style={{ marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <dt style={{ fontWeight: 'bold' }}>⚡ Energia:</dt>
+                        <dd style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            {energyImageMap[tournament.energia] && (
+                                <img
+                                    src={import.meta.env.BASE_URL + energyImageMap[tournament.energia]}
+                                    alt={tournament.energia}
+                                    style={{ width: '28px', height: '28px', objectFit: 'contain' }}
+                                />
+                            )}
+                            {tournament.energia}
+                        </dd>
                     </div>
                 </dl>
                 {tournament.badgeImage && (
@@ -232,7 +268,10 @@ const TournamentDetail: React.FC = () => {
                     padding: '20px',
                     boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
                 }}>
-                    {leaderboard.map((player, index) => (
+                    {leaderboard.map((player, index) => {
+                        // Prima posizione solo se non c'è parità irrisolta in cima
+                        const isWinner = index === 0 && tiedTopPlayers.length === 0;
+                        return (
                         <div 
                             key={player.name}
                             style={{
@@ -240,9 +279,9 @@ const TournamentDetail: React.FC = () => {
                                 alignItems: 'center',
                                 padding: '12px 15px',
                                 marginBottom: index < leaderboard.length - 1 ? '10px' : '0',
-                                backgroundColor: index === 0 ? '#fff9c4' : '#f5f5f5',
+                                backgroundColor: isWinner ? '#fff9c4' : '#f5f5f5',
                                 borderRadius: '6px',
-                                border: index === 0 ? '2px solid #fbc02d' : '1px solid #e0e0e0'
+                                border: isWinner ? '2px solid #fbc02d' : '1px solid #e0e0e0'
                             }}
                         >
                             <span style={{
@@ -250,20 +289,20 @@ const TournamentDetail: React.FC = () => {
                                 fontWeight: 'bold',
                                 marginRight: '15px',
                                 minWidth: '30px',
-                                color: index === 0 ? '#f57c00' : '#9e9e9e'
+                                color: isWinner ? '#f57c00' : '#9e9e9e'
                             }}>
-                                {index === 0 ? '🏆' : `${index + 1}°`}
+                                {isWinner ? '🏆' : `${index + 1}°`}
                             </span>
                             <span style={{
                                 flex: 1,
                                 fontSize: '18px',
-                                fontWeight: index === 0 ? 'bold' : 'normal',
+                                fontWeight: isWinner ? 'bold' : 'normal',
                                 display: 'flex',
                                 alignItems: 'center',
                                 gap: '10px'
                             }}>
                                 {player.name}
-                                {index === 0 && tournament.badgeImage && (
+                                {isWinner && tournament.badgeImage && allPlayed && (
                                     <img
                                         src={import.meta.env.BASE_URL + tournament.badgeImage}
                                         alt={`Medaglia ${tournament.name}`}
@@ -293,8 +332,83 @@ const TournamentDetail: React.FC = () => {
                                 </span>
                             </div>
                         </div>
-                    ))}
+                        );
+                    })}
                 </div>
+
+                {/* Sezione spareggio */}
+                {tiedTopPlayers.length >= 2 && (
+                    <div style={{
+                        marginTop: '20px',
+                        padding: '16px 20px',
+                        backgroundColor: '#fff3e0',
+                        border: '2px solid #ff9800',
+                        borderRadius: '8px'
+                    }}>
+                        <h3 style={{ margin: '0 0 8px', color: '#e65100' }}>⚔️ Spareggio</h3>
+                        <p style={{ margin: '0 0 14px', fontSize: '14px', color: '#555' }}>
+                            {tiedTopPlayers.map(p => p.name).join(' e ')} sono in parità con {tiedTopPlayers[0].wins} vittorie. Seleziona il vincitore dello spareggio:
+                        </p>
+                        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                            {tiedTopPlayers.map(p => (
+                                <button
+                                    key={p.name}
+                                    onClick={() => updateTiebreaker(tournament.id, {
+                                        participant1: tiedTopPlayers[0].name,
+                                        participant2: tiedTopPlayers[1].name,
+                                        winner: p.name
+                                    })}
+                                    style={{
+                                        padding: '10px 22px',
+                                        backgroundColor: '#ff9800',
+                                        color: 'white',
+                                        border: 'none',
+                                        borderRadius: '6px',
+                                        fontSize: '15px',
+                                        fontWeight: 'bold',
+                                        cursor: 'pointer'
+                                    }}
+                                    onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#e65100')}
+                                    onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#ff9800')}
+                                >
+                                    🏆 {p.name}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {/* Spareggio già assegnato: mostra il risultato con opzione di modifica */}
+                {allPlayed && tournament.tiebreaker?.winner && (
+                    <div style={{
+                        marginTop: '20px',
+                        padding: '12px 16px',
+                        backgroundColor: '#e8f5e9',
+                        border: '1px solid #a5d6a7',
+                        borderRadius: '8px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between'
+                    }}>
+                        <span style={{ fontSize: '14px', color: '#2e7d32' }}>
+                            ⚔️ Spareggio vinto da <strong>{tournament.tiebreaker.winner}</strong>
+                        </span>
+                        <button
+                            onClick={() => updateTiebreaker(tournament.id, null)}
+                            style={{
+                                padding: '4px 12px',
+                                backgroundColor: 'transparent',
+                                color: '#c62828',
+                                border: '1px solid #c62828',
+                                borderRadius: '4px',
+                                fontSize: '13px',
+                                cursor: 'pointer'
+                            }}
+                        >
+                            Annulla
+                        </button>
+                    </div>
+                )}
             </section>
         </main>
     );

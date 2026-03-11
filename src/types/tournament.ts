@@ -13,6 +13,11 @@ export interface Tournament {
             losses: number;
         };
     };
+    tiebreaker?: {
+        participant1: string;
+        participant2: string;
+        winner: string;
+    };
 }
 
 export interface Match {

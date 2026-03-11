@@ -7,6 +7,8 @@ import Header from './components/Header';
 import Dashboard from './pages/Dashboard';
 import TournamentDetail from './pages/TournamentDetail';
 import Admin from './pages/Admin';
+import Tournaments from './pages/Tournaments';
+import Regolamento from './pages/Regolamento';
 import Login from './components/Login';
 
 /**
@@ -31,6 +33,8 @@ const App = () => {
               <Routes>
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/tournament/:id" element={<TournamentDetail />} />
+                <Route path="/tournaments" element={<Tournaments />} />
+                <Route path="/regolamento" element={<Regolamento />} />
                 <Route path="/admin" element={<Admin />} />
                 <Route path="/login" element={<Login />} />
               </Routes>
