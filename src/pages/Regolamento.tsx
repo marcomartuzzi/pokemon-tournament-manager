@@ -6,7 +6,6 @@ const Regolamento: React.FC = () => {
     return (
         <div style={{ padding: '0 20px 20px' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-                <h2 style={{ margin: 0 }}>📋 Regolamento</h2>
                 <a
                     href={pdfUrl}
                     download="Regole torneo.pdf"

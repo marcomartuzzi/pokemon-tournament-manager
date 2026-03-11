@@ -11,23 +11,26 @@ const Header: React.FC = () => {
 
     // Stile base per i link di navigazione
     const navLinkStyle: React.CSSProperties = {
-        color: '#2196F3',
+        color: 'white',
         textDecoration: 'none',
         padding: '8px 16px',
         borderRadius: '6px',
-        fontWeight: '500',
-        fontSize: '16px',
+        fontWeight: '700',
+        fontSize: '14px',
+        fontFamily: "'Nunito', sans-serif",
         transition: 'all 0.2s ease',
         display: 'inline-block',
-        backgroundColor: 'transparent'
+        backgroundColor: 'rgba(255,255,255,0.12)',
+        letterSpacing: '0.3px',
     };
 
     return (
         <header style={{ 
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+            background: 'linear-gradient(135deg, #003A70 0%, #3D7DCA 100%)',
+            boxShadow: '0 3px 12px rgba(0,58,112,0.4)',
             padding: '15px 30px',
-            marginBottom: '20px' 
+            marginBottom: '20px',
+            borderBottom: '4px solid #FFCB05',
         }}>
             <div style={{ 
                 display: 'flex', 
@@ -37,22 +40,31 @@ const Header: React.FC = () => {
             }}>
                 <h1 style={{ 
                     margin: 0, 
-                    color: 'white',
-                    fontSize: '24px',
-                    fontWeight: 'bold',
-                    textShadow: '2px 2px 4px rgba(0,0,0,0.2)'
+                    color: '#FFCB05',
+                    fontSize: '13px',
+                    fontFamily: "'Press Start 2P', monospace",
+                    letterSpacing: '1px',
+                    textShadow: '2px 2px 0px rgba(0,0,0,0.4)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
                 }}>
-                    🎮 Pokémon Tournament Manager
+                    <img
+                        src={import.meta.env.BASE_URL + 'imgs/tcgpocketlogo_en.png'}
+                        alt="Pokémon TCG Pocket"
+                        style={{ height: '36px', objectFit: 'contain' }}
+                    />
+                    Pokémon Tournament Manager
                 </h1>
                 
                 {user && (
                     <div style={{ 
                         fontSize: '14px', 
                         color: 'white',
-                        backgroundColor: 'rgba(255,255,255,0.2)',
+                        backgroundColor: 'rgba(255,203,5,0.2)',
                         padding: '6px 12px',
                         borderRadius: '20px',
-                        backdropFilter: 'blur(10px)'
+                        border: '1px solid rgba(255,203,5,0.4)',
                     }}>
                         👤 <strong>{user.displayName || user.username}</strong>
                         {user.isAdmin && <span style={{ color: '#ffd54f' }}> ⭐ (Admin)</span>}
@@ -86,7 +98,7 @@ const Header: React.FC = () => {
                                 e.currentTarget.style.transform = 'translateY(0)';
                             }}
                         >
-                            🏅 Classifica Generale
+                            Medagliere
                         </Link>
                     </li>
                     <li>

@@ -8,12 +8,25 @@ const Tournaments: React.FC = () => {
 
     return (
         <div style={{ padding: '0 20px 20px' }}>
-            <h2 style={{ marginBottom: '20px' }}>🏆 Lista Tornei</h2>
             <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
-                gap: '16px'
+                backgroundColor: 'white',
+                borderRadius: '12px',
+                boxShadow: '0 2px 12px rgba(0,58,112,0.12)',
+                borderTop: '4px solid #FFCB05',
+                padding: '20px',
             }}>
+                <h2 style={{
+                    margin: '0 0 20px',
+                    color: '#003A70',
+                    fontFamily: "'Press Start 2P', monospace",
+                    fontSize: '13px',
+                    letterSpacing: '1px',
+                }}>Lista Tornei</h2>
+                <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
+                    gap: '16px'
+                }}>
                 {tournaments.map(tournament => {
                     const played = tournament.matches.filter(m => m.winner !== '').length;
                     const total = tournament.matches.length;
@@ -38,24 +51,31 @@ const Tournaments: React.FC = () => {
                             style={{ textDecoration: 'none', color: 'inherit' }}
                         >
                             <div style={{
-                                border: '1px solid #ddd',
-                                borderRadius: '12px',
+                                border: '1px solid #d0e4f7',
+                                borderLeft: '4px solid #3D7DCA',
+                                borderRadius: '10px',
                                 padding: '16px',
-                                backgroundColor: 'white',
-                                boxShadow: '0 2px 6px rgba(0,0,0,0.08)',
-                                transition: 'transform 0.15s ease, box-shadow 0.15s ease',
+                                backgroundColor: '#f7fbff',
+                                boxShadow: '0 2px 6px rgba(0,58,112,0.07)',
+                                transition: 'transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease',
                                 cursor: 'pointer',
                                 display: 'flex',
                                 flexDirection: 'column',
                                 gap: '10px'
                             }}
                             onMouseEnter={e => {
-                                (e.currentTarget as HTMLElement).style.transform = 'translateY(-3px)';
-                                (e.currentTarget as HTMLElement).style.boxShadow = '0 6px 16px rgba(0,0,0,0.15)';
+                                const el = e.currentTarget as HTMLElement;
+                                el.style.transform = 'translateY(-3px)';
+                                el.style.boxShadow = '0 6px 18px rgba(0,58,112,0.18)';
+                                el.style.borderColor = '#FFCB05';
+                                el.style.borderLeftColor = '#FFCB05';
                             }}
                             onMouseLeave={e => {
-                                (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
-                                (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 6px rgba(0,0,0,0.08)';
+                                const el = e.currentTarget as HTMLElement;
+                                el.style.transform = 'translateY(0)';
+                                el.style.boxShadow = '0 2px 6px rgba(0,58,112,0.07)';
+                                el.style.borderColor = '#d0e4f7';
+                                el.style.borderLeftColor = '#3D7DCA';
                             }}
                             >
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -65,8 +85,8 @@ const Tournaments: React.FC = () => {
                                         style={{ width: '48px', height: '48px', objectFit: 'contain' }}
                                     />
                                     <div>
-                                        <div style={{ fontWeight: 'bold', fontSize: '15px' }}>{tournament.name}</div>
-                                        <div style={{ fontSize: '13px', color: '#666', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                        <div style={{ fontWeight: '800', fontSize: '15px', color: '#003A70' }}>{tournament.name}</div>
+                                        <div style={{ fontSize: '13px', color: '#3D7DCA', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: '600' }}>
                                             {energyImageMap[tournament.energia]
                                                 ? <img src={import.meta.env.BASE_URL + energyImageMap[tournament.energia]} alt={tournament.energia} style={{ width: '18px', height: '18px', objectFit: 'contain' }} />
                                                 : '⚡'
@@ -83,18 +103,19 @@ const Tournaments: React.FC = () => {
                                     display: 'flex',
                                     justifyContent: 'space-between',
                                     fontSize: '13px',
-                                    borderTop: '1px solid #eee',
-                                    paddingTop: '8px'
+                                    borderTop: '1px solid #d0e4f7',
+                                    paddingTop: '8px',
+                                    fontWeight: '600',
                                 }}>
-                                    <span>🎯 {played}/{total} partite</span>
+                                    <span style={{ color: '#003A70' }}>🎯 {played}/{total} partite</span>
                                     {winner && (
-                                        <span style={{ color: '#e65100', fontWeight: 'bold' }}>🏆 {winner}</span>
+                                        <span style={{ color: '#CC0000', fontWeight: 'bold' }}>🏆 {winner}</span>
                                     )}
                                     {!winner && played === total && (
-                                        <span style={{ color: '#e65100' }}>⚔️ Spareggio</span>
+                                        <span style={{ color: '#CC0000' }}>⚔️ Spareggio</span>
                                     )}
                                     {played > 0 && played < total && (
-                                        <span style={{ color: '#1565C0' }}>In corso...</span>
+                                        <span style={{ color: '#3D7DCA' }}>In corso...</span>
                                     )}
                                     {played === 0 && (
                                         <span style={{ color: '#aaa' }}>Non iniziato</span>
@@ -104,6 +125,7 @@ const Tournaments: React.FC = () => {
                         </Link>
                     );
                 })}
+                </div>
             </div>
         </div>
     );

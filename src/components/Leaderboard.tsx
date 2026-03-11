@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTournamentContext } from '../context/TournamentContext';
 
 const Leaderboard: React.FC = () => {
     const { tournaments } = useTournamentContext();
+    const [lightbox, setLightbox] = useState<{ url: string; name: string } | null>(null);
 
     // Collect all unique participants
     const allParticipants: string[] = [];
@@ -50,9 +51,29 @@ const Leaderboard: React.FC = () => {
 
     return (
         <div className="leaderboard">
-            <h2>Classifica</h2>
+            {/* Lightbox overlay */}
+            {lightbox && (
+                <div
+                    onClick={() => setLightbox(null)}
+                    style={{
+                        position: 'fixed', inset: 0, zIndex: 1000,
+                        backgroundColor: 'rgba(0,0,0,0.75)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        cursor: 'zoom-out',
+                    }}
+                >
+                    <img
+                        src={lightbox.url}
+                        alt={lightbox.name}
+                        style={{ maxWidth: '80vw', maxHeight: '80vh', borderRadius: '12px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)' }}
+                    />
+                </div>
+            )}
+            <h2>Medagliere</h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                {participantBadges.map(({ participant, wonTournaments }) => (
+                {participantBadges.map(({ participant, wonTournaments }) => {
+                    const avatarUrl = import.meta.env.BASE_URL + 'avatars/' + participant.toLowerCase() + '.png';
+                    return (
                     <div
                         key={participant}
                         style={{
@@ -66,7 +87,44 @@ const Leaderboard: React.FC = () => {
                             border: '1px solid #eee',
                         }}
                     >
-                        <span style={{ fontWeight: '600', fontSize: '15px', minWidth: '80px' }}>
+                        <img
+                            src={avatarUrl}
+                            alt={participant}
+                            onClick={() => setLightbox({ url: avatarUrl, name: participant })}
+                            onError={e => {
+                                const el = e.currentTarget;
+                                el.style.display = 'none';
+                                const sibling = el.nextElementSibling as HTMLElement;
+                                if (sibling) sibling.style.display = 'flex';
+                            }}
+                            style={{
+                                width: '64px',
+                                height: '64px',
+                                borderRadius: '50%',
+                                objectFit: 'cover',
+                                border: '2px solid #e0e0e0',
+                                flexShrink: 0,
+                                cursor: 'zoom-in',
+                            }}
+                        />
+                        {/* Fallback iniziali se l'immagine non esiste */}
+                        <div style={{
+                            display: 'none',
+                            width: '64px',
+                            height: '64px',
+                            borderRadius: '50%',
+                            backgroundColor: '#667eea',
+                            color: 'white',
+                            fontWeight: 'bold',
+                            fontSize: '22px',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            flexShrink: 0,
+                            border: '2px solid #e0e0e0',
+                        }}>
+                            {participant.charAt(0).toUpperCase()}
+                        </div>
+                        <span style={{ fontWeight: '600', fontSize: '15px', minWidth: '70px' }}>
                             {participant}
                         </span>
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', flex: 1 }}>
@@ -96,17 +154,9 @@ const Leaderboard: React.FC = () => {
                                 ))
                             )}
                         </div>
-                        <span style={{
-                            minWidth: '24px',
-                            textAlign: 'right',
-                            fontSize: '14px',
-                            color: '#555',
-                            fontWeight: '600',
-                        }}>
-                            {wonTournaments.length > 0 ? `🏅 ${wonTournaments.length}` : ''}
-                        </span>
                     </div>
-                ))}
+                    );
+                })}
             </div>
         </div>
     );

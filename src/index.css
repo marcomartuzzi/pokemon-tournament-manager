@@ -1,19 +1,24 @@
+/* === PokÃ©mon Theme === */
+/* Palette: Yellow #FFCB05 | Blue #3D7DCA | Dark Blue #003A70 | Red #CC0000 */
+
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Nunito', Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
+    background-color: #EBF4FF;
+    color: #1a1a2e;
+}
+
+h1, h2, h3 {
+    font-family: 'Nunito', Arial, sans-serif;
+    font-weight: 800;
 }
 
 header {
-    background: #35424a;
+    background: #003A70;
     color: #ffffff;
     padding: 10px 0;
     text-align: center;
-}
-
-h1 {
-    margin: 0;
 }
 
 .container {
@@ -31,8 +36,9 @@ h1 {
     background: #ffffff;
     margin: 10px 0;
     padding: 15px;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 58, 112, 0.1);
+    border-left: 4px solid #FFCB05;
 }
 
 .match-tracker {
@@ -42,9 +48,18 @@ h1 {
 .leaderboard {
     margin: 20px 0;
     background: #ffffff;
-    padding: 15px;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0, 58, 112, 0.12);
+    border-top: 4px solid #FFCB05;
+}
+
+.leaderboard h2 {
+    color: #003A70;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 14px;
+    letter-spacing: 1px;
+    margin-bottom: 16px;
 }
 
 .login-form {
@@ -57,23 +72,36 @@ h1 {
 .login-form input {
     margin: 10px 0;
     padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    border: 2px solid #3D7DCA;
+    border-radius: 8px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+}
+
+.login-form input:focus {
+    outline: none;
+    border-color: #FFCB05;
+    box-shadow: 0 0 0 3px rgba(255, 203, 5, 0.3);
 }
 
 .login-form button {
     padding: 10px;
-    background: #35424a;
+    background: #3D7DCA;
     color: #ffffff;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    transition: background 0.2s;
 }
 
 .login-form button:hover {
-    background: #2c3e50;
+    background: #003A70;
 }
-/* Accessibility: Screen Reader Only (sr-only) */
+
+/* Accessibility: Screen Reader Only */
 .sr-only {
     position: absolute;
     width: 1px;
@@ -86,7 +114,35 @@ h1 {
     border-width: 0;
 }
 
-/* Focus visible per accessibilità keyboard */
+*:focus-visible {
+    outline: 2px solid #FFCB05;
+    outline-offset: 2px;
+}
+
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: #3D7DCA;
+    color: white;
+    padding: 8px;
+    text-decoration: none;
+    z-index: 100;
+}
+
+.skip-link:focus {
+    top: 0;
+}
+
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* Focus visible per accessibilitï¿½ keyboard */
 *:focus-visible {
     outline: 2px solid #2196F3;
     outline-offset: 2px;
