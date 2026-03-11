@@ -165,7 +165,7 @@ const Admin: React.FC = () => {
                         }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                                 {t.badgeImage && (
-                                    <img src={t.badgeImage} alt={t.name} style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
+                                    <img src={import.meta.env.BASE_URL + t.badgeImage} alt={t.name} style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
                                 )}
                                 <span style={{ fontWeight: 'bold', fontSize: '14px' }}>{t.name}</span>
                                 <span style={{ fontSize: '12px', color: '#999' }}>

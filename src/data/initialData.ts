@@ -5,7 +5,7 @@ export const initialData = {
       name: "Medaglia Sasso (Plumbeopoli)",
       participants: ["Marco", "Luca", "Gabriele", "Jacopo"],
       energia: "Metallo",
-      badgeImage: "/badges/sasso.png",
+      badgeImage: "badges/sasso.png",
       gym: "Palestra di Plumbeopoli",
       leader: "Brock",
       matches: [
@@ -22,7 +22,7 @@ export const initialData = {
       name: "Medaglia Cascata (Celestopoli)",
       participants: ["Marco", "Luca", "Gabriele", "Jacopo"],
       energia: "Acqua",
-      badgeImage: "/badges/cascata.png",
+      badgeImage: "badges/cascata.png",
       gym: "Palestra di Celestopoli",
       leader: "Misty",
       matches: [
@@ -39,7 +39,7 @@ export const initialData = {
       name: "Medaglia Tuono (Aranciopoli)",
       participants: ["Marco", "Luca", "Gabriele", "Jacopo"],
       energia: "Lampo",
-      badgeImage: "/badges/tuono.png",
+      badgeImage: "badges/tuono.png",
       gym: "Palestra di Aranciopoli",
       leader: "Lt. Surge",
       matches: [
@@ -56,7 +56,7 @@ export const initialData = {
       name: "Medaglia Arcobaleno (Azzurropoli)",
       participants: ["Marco", "Luca", "Gabriele", "Jacopo"],
       energia: "Erba",
-      badgeImage: "/badges/arcobaleno.png",
+      badgeImage: "badges/arcobaleno.png",
       gym: "Palestra di Azzurropoli",
       leader: "Erika",
       matches: [
@@ -73,7 +73,7 @@ export const initialData = {
       name: "Medaglia Anima (Fucsiapoli)",
       participants: ["Marco", "Luca", "Gabriele", "Jacopo"],
       energia: "Psico",
-      badgeImage: "/badges/anima.png",
+      badgeImage: "badges/anima.png",
       gym: "Palestra di Fucsiapoli",
       leader: "Koga",
       matches: [
@@ -90,7 +90,7 @@ export const initialData = {
       name: "Medaglia Palude (Zafferanopoli)",
       participants: ["Marco", "Luca", "Gabriele", "Jacopo"],
       energia: "Oscurità",
-      badgeImage: "/badges/palude.png",
+      badgeImage: "badges/palude.png",
       gym: "Palestra di Zafferanopoli",
       leader: "Sabrina",
       matches: [
@@ -107,7 +107,7 @@ export const initialData = {
       name: "Medaglia Vulcano (Isola Cannella)",
       participants: ["Marco", "Luca", "Gabriele", "Jacopo"],
       energia: "Fuoco",
-      badgeImage: "/badges/vulcano.png",
+      badgeImage: "badges/vulcano.png",
       gym: "Palestra dell'Isola Cannella",
       leader: "Blaine",
       matches: [
@@ -124,7 +124,7 @@ export const initialData = {
       name: "Medaglia Terra (Smeraldopoli)",
       participants: ["Marco", "Luca", "Gabriele", "Jacopo"],
       energia: "Lotta",
-      badgeImage: "/badges/terra.png",
+      badgeImage: "badges/terra.png",
       gym: "Palestra di Smeraldopoli",
       leader: "Giovanni",
       matches: [

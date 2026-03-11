@@ -139,7 +139,7 @@ const TournamentDetail: React.FC = () => {
                     <div style={{ marginTop: '15px' }}>
                         <p style={{ fontWeight: 'bold', marginBottom: '10px' }}>🏅 Medaglia:</p>
                         <img 
-                            src={tournament.badgeImage} 
+                            src={import.meta.env.BASE_URL + tournament.badgeImage} 
                             alt={`Medaglia ${tournament.name}`}
                             style={{ 
                                 width: '120px', 
@@ -265,7 +265,7 @@ const TournamentDetail: React.FC = () => {
                                 {player.name}
                                 {index === 0 && tournament.badgeImage && (
                                     <img
-                                        src={tournament.badgeImage}
+                                        src={import.meta.env.BASE_URL + tournament.badgeImage}
                                         alt={`Medaglia ${tournament.name}`}
                                         style={{
                                             width: '36px',
