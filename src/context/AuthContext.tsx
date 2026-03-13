@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { authorizedUsers } from '../data/initialData';
+import { collection, doc, getDocs, writeBatch } from 'firebase/firestore';
+import { db } from '../utils/firebase';
+import { initialUsers } from '../data/initialData';
 
 interface User {
   username: string;
@@ -9,7 +11,7 @@ interface User {
 
 interface AuthContextType {
   user: User | null;
-  login: (username: string) => void;
+  login: (username: string, isAdmin: boolean, displayName: string) => void;
   logout: () => void;
 }
 
@@ -17,13 +19,26 @@ export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(() => {
-    // Carica l'utente dal localStorage all'avvio
     const savedUser = localStorage.getItem('user');
     return savedUser ? JSON.parse(savedUser) : null;
   });
 
+  // Seed della collection users su Firestore al primo avvio
   useEffect(() => {
-    // Salva l'utente nel localStorage quando cambia
+    const seedUsers = async () => {
+      const snapshot = await getDocs(collection(db, 'users'));
+      if (snapshot.empty) {
+        const batch = writeBatch(db);
+        initialUsers.forEach(u => {
+          batch.set(doc(db, 'users', u.username), u);
+        });
+        await batch.commit();
+      }
+    };
+    seedUsers().catch(console.error);
+  }, []);
+
+  useEffect(() => {
     if (user) {
       localStorage.setItem('user', JSON.stringify(user));
     } else {
@@ -31,16 +46,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   }, [user]);
 
-  const login = (username: string) => {
-    // Trova l'utente nella lista autorizzata per ottenere i dettagli completi
-    const foundUser = authorizedUsers.find(u => u.username.toLowerCase() === username.toLowerCase());
-    
-    const newUser: User = {
-      username,
-      isAdmin: foundUser?.isAdmin || false,
-      displayName: foundUser?.displayName || username
-    };
-    setUser(newUser);
+  const login = (username: string, isAdmin: boolean, displayName: string) => {
+    setUser({ username, isAdmin, displayName });
   };
 
   const logout = () => {

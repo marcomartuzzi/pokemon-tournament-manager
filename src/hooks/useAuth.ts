@@ -1,6 +1,7 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useContext } from 'react';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../utils/firebase';
 import { AuthContext } from '../context/AuthContext';
-import { authorizedUsers } from '../data/initialData';
 
 const useAuth = () => {
     const context = useContext(AuthContext);
@@ -17,17 +18,11 @@ const useAuth = () => {
         setLoading(true);
         setError(null);
         try {
-            // Verifica credenziali dalla lista utenti autorizzati
-            const foundUser = authorizedUsers.find(
-                u => u.username.toLowerCase() === username.toLowerCase() && u.password === password
-            );
-            
-            if (foundUser) {
-                contextLogin(foundUser.username);
-                setError(null);
-            } else {
-                throw new Error('Username o password non corretti');
-            }
+            const userDoc = await getDoc(doc(db, 'users', username.toLowerCase()));
+            if (!userDoc.exists()) throw new Error('Username o password non corretti');
+            const foundUser = userDoc.data();
+            if (foundUser.password !== password) throw new Error('Username o password non corretti');
+            contextLogin(foundUser.username, foundUser.isAdmin ?? false, foundUser.displayName ?? username);
         } catch (err: any) {
             setError(err.message);
             throw err;

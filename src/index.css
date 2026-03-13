@@ -134,32 +134,104 @@ header {
     top: 0;
 }
 
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
+/* === Global box sizing & overflow fix === */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+html, body {
+    overflow-x: hidden;
+    max-width: 100%;
+}
+
+/* === Header responsive layout === */
+.app-header {
+    padding: 15px 30px;
+}
+
+.header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.header-title {
+    margin: 0;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.header-logo {
+    height: 36px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.header-user {
+    font-size: 14px;
+    padding: 6px 12px;
+    border-radius: 20px;
     white-space: nowrap;
-    border-width: 0;
 }
 
-/* Focus visible per accessibilit� keyboard */
-*:focus-visible {
-    outline: 2px solid #2196F3;
-    outline-offset: 2px;
+.header-nav-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    gap: 8px;
+    margin: 0;
+    align-items: center;
+    flex-wrap: wrap;
 }
 
-/* Skip to main content link (accessibility best practice) */
-.skip-link {
-    position: absolute;
-    top: -40px;
-    left: 0;
-    background: #2196F3;
-    color: white;
-    padding: 8px;
-    text-decoration: none;
-    z-index: 100;
+/* === Responsive table wrapper === */
+.table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
 }
 
-.skip-link:focus {
-    top: 0;
+/* === Mobile breakpoint (≤ 640px) === */
+@media (max-width: 640px) {
+    .app-header {
+        padding: 10px 12px;
+    }
+
+    .header-title {
+        font-size: 8px;
+        gap: 6px;
+    }
+
+    .header-logo {
+        height: 26px;
+    }
+
+    .header-user {
+        font-size: 12px;
+        padding: 4px 8px;
+    }
+
+    .header-nav-list {
+        gap: 4px;
+    }
+
+    .container {
+        width: 96%;
+    }
+}
+
+/* === Tablet breakpoint (641px – 900px) === */
+@media (min-width: 641px) and (max-width: 900px) {
+    .app-header {
+        padding: 12px 20px;
+    }
+
+    .header-title {
+        font-size: 10px;
+    }
 }

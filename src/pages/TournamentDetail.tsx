@@ -199,6 +199,7 @@ const TournamentDetail: React.FC = () => {
                     Inserisci 1 per vittoria, 0 per sconfitta
                 </p>
                 
+                <div className="table-scroll">
                 <table 
                     style={{ 
                         borderCollapse: 'collapse', 
@@ -250,6 +251,7 @@ const TournamentDetail: React.FC = () => {
                         ))}
                     </tbody>
                 </table>
+                </div>
             </section>
 
             {/* Classifica Torneo */}

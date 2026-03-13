@@ -25,45 +25,31 @@ const Header: React.FC = () => {
     };
 
     return (
-        <header style={{ 
+        <header className="app-header" style={{ 
             background: 'linear-gradient(135deg, #003A70 0%, #3D7DCA 100%)',
             boxShadow: '0 3px 12px rgba(0,58,112,0.4)',
-            padding: '15px 30px',
             marginBottom: '20px',
             borderBottom: '4px solid #FFCB05',
         }}>
-            <div style={{ 
-                display: 'flex', 
-                justifyContent: 'space-between', 
-                alignItems: 'center',
-                marginBottom: '12px'
-            }}>
-                <h1 style={{ 
-                    margin: 0, 
+            <div className="header-top">
+                <h1 className="header-title" style={{ 
                     color: '#FFCB05',
-                    fontSize: '13px',
                     fontFamily: "'Press Start 2P', monospace",
                     letterSpacing: '1px',
                     textShadow: '2px 2px 0px rgba(0,0,0,0.4)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '10px',
                 }}>
                     <img
                         src={import.meta.env.BASE_URL + 'imgs/tcgpocketlogo_en.png'}
                         alt="Pokémon TCG Pocket"
-                        style={{ height: '36px', objectFit: 'contain' }}
+                        className="header-logo"
                     />
                     Pokémon Tournament Manager
                 </h1>
                 
                 {user && (
-                    <div style={{ 
-                        fontSize: '14px', 
+                    <div className="header-user" style={{ 
                         color: 'white',
                         backgroundColor: 'rgba(255,203,5,0.2)',
-                        padding: '6px 12px',
-                        borderRadius: '20px',
                         border: '1px solid rgba(255,203,5,0.4)',
                     }}>
                         👤 <strong>{user.displayName || user.username}</strong>
@@ -73,14 +59,7 @@ const Header: React.FC = () => {
             </div>
             
             <nav role="navigation" aria-label="Menu principale">
-                <ul style={{ 
-                    listStyle: 'none', 
-                    padding: 0, 
-                    display: 'flex', 
-                    gap: '8px',
-                    margin: 0,
-                    alignItems: 'center'
-                }}>
+                <ul className="header-nav-list">
                     <li>
                         <Link 
                             to="/" 
@@ -98,7 +77,7 @@ const Header: React.FC = () => {
                                 e.currentTarget.style.transform = 'translateY(0)';
                             }}
                         >
-                            Medagliere
+                            🏅 Medagliere
                         </Link>
                     </li>
                     <li>

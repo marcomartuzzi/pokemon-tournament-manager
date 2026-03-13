@@ -145,9 +145,8 @@ export const initialData = {
   ],
 };
 
-// Lista utenti autorizzati
-// Per aggiungere nuovi utenti, aggiungi un oggetto qui
-export const authorizedUsers = [
+// Lista utenti iniziali — usata solo per il seed del DB al primo avvio
+export const initialUsers = [
   {
     username: 'admin',
     password: 'admin',
