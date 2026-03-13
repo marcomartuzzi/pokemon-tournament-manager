@@ -57,27 +57,18 @@ const TournamentDetail: React.FC = () => {
         return match.winner === player1 ? '1' : '0';
     }, [tournament.matches]);
 
-    // Memoizza handler (evita re-creazione ad ogni render)
-    const handleResultChange = useCallback((player1: string, player2: string, value: string) => {
+    // Click su cella: cicla '' → vittoria (V) → sconfitta (S) → ''
+    const handleCellClick = useCallback((player1: string, player2: string) => {
         if (player1 === player2) return;
-        if (value !== '0' && value !== '1' && value !== '') return;
-
         const match = tournament.matches.find(
             m => (m.participant1 === player1 && m.participant2 === player2) ||
                  (m.participant1 === player2 && m.participant2 === player1)
         );
-
         if (!match) return;
-
-        let winner = '';
-        if (value === '1') {
-            winner = player1;
-        } else if (value === '0') {
-            winner = player2;
-        }
-
-        const updatedMatch = { ...match, winner };
-        updateMatchResult(tournament.id, match.id, updatedMatch);
+        const current = match.winner === player1 ? '1' : match.winner === player2 ? '0' : '';
+        const next = current === '' ? '1' : current === '1' ? '0' : '';
+        const winner = next === '1' ? player1 : next === '0' ? player2 : '';
+        updateMatchResult(tournament.id, match.id, { ...match, winner });
     }, [tournament.id, tournament.matches, updateMatchResult]);
 
     // Memoizza calcolo statistiche (performance optimization)
@@ -193,64 +184,107 @@ const TournamentDetail: React.FC = () => {
             </section>
 
             {/* Tabella Risultati */}
-            <section aria-labelledby="results-table">
-                <h2 id="results-table">Tabella Risultati</h2>
-                <p style={{ fontSize: '14px', color: '#666', marginBottom: '10px' }}>
-                    Inserisci 1 per vittoria, 0 per sconfitta
+            <section aria-labelledby="results-table" style={{ marginBottom: '30px' }}>
+                <h2 id="results-table">📊 Tabella Risultati</h2>
+                <p style={{ fontSize: '13px', color: '#666', marginBottom: '12px' }}>
+                    Tocca una cella per inserire il risultato —&nbsp;
+                    <span style={{ background: '#c8e6c9', color: '#1b5e20', padding: '2px 8px', borderRadius: '4px', fontWeight: 'bold' }}>V</span>
+                    &nbsp;vittoria&nbsp;&nbsp;
+                    <span style={{ background: '#ffcdd2', color: '#b71c1c', padding: '2px 8px', borderRadius: '4px', fontWeight: 'bold' }}>S</span>
+                    &nbsp;sconfitta
                 </p>
-                
-                <div className="table-scroll">
-                <table 
-                    style={{ 
-                        borderCollapse: 'collapse', 
-                        width: '100%', 
-                        maxWidth: '600px',
-                        margin: '0 auto'
-                    }}
-                    aria-label="Matrice risultati partite"
-                >
-                    <thead>
-                        <tr>
-                            <th scope="col" style={cellStyle}></th>
-                            {participants.map(p => (
-                                <th key={p} scope="col" style={headerStyle}>{p}</th>
-                            ))}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {participants.map(player1 => (
-                            <tr key={player1}>
-                                <th scope="row" style={rowHeaderStyle}>{player1}</th>
-                                {participants.map(player2 => (
-                                    <td key={player2} style={cellStyle}>
-                                        {player1 === player2 ? (
-                                            <span style={{ color: '#999' }} aria-label="Stesso giocatore">
-                                                /
-                                            </span>
-                                        ) : (
-                                            <input
-                                                type="text"
-                                                value={getMatchResult(player1, player2)}
-                                                onChange={(e) => handleResultChange(player1, player2, e.target.value)}
-                                                maxLength={1}
-                                                aria-label={`Risultato partita ${player1} vs ${player2}`}
-                                                placeholder="-"
-                                                style={{
-                                                    width: '40px',
-                                                    height: '40px',
-                                                    textAlign: 'center',
-                                                    fontSize: '18px',
-                                                    border: '1px solid #ddd',
-                                                    borderRadius: '4px'
-                                                }}
-                                            />
-                                        )}
-                                    </td>
+                <div style={{ overflowX: 'auto', borderRadius: '12px', boxShadow: '0 2px 12px rgba(0,0,0,0.12)' }}>
+                    <table
+                        style={{
+                            borderCollapse: 'separate',
+                            borderSpacing: '3px',
+                            margin: '0 auto',
+                            minWidth: 'max-content',
+                            background: '#c5cae9',
+                            padding: '6px',
+                            borderRadius: '12px',
+                        }}
+                        aria-label="Matrice risultati partite"
+                    >
+                        <thead>
+                            <tr>
+                                <th style={matrixCornerStyle}></th>
+                                {participants.map(p => (
+                                    <th key={p} scope="col" style={matrixColHeaderStyle}>
+                                        <img
+                                            src={`${import.meta.env.BASE_URL}avatars/${p.toLowerCase()}.png`}
+                                            alt={p}
+                                            style={{ width: '28px', height: '28px', borderRadius: '50%', objectFit: 'cover', border: '2px solid rgba(255,255,255,0.7)', display: 'block', margin: '0 auto 3px' }}
+                                            onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+                                        />
+                                        <span style={{ fontSize: '12px', fontWeight: 'bold' }}>{p}</span>
+                                    </th>
                                 ))}
+                                <th style={{ ...matrixColHeaderStyle, background: '#2e7d32', minWidth: '40px' }}>V</th>
+                                <th style={{ ...matrixColHeaderStyle, background: '#c62828', minWidth: '40px' }}>S</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {participants.map(player1 => (
+                                <tr key={player1}>
+                                    <th scope="row" style={matrixRowHeaderStyle}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                                            <img
+                                                src={`${import.meta.env.BASE_URL}avatars/${player1.toLowerCase()}.png`}
+                                                alt={player1}
+                                                style={{ width: '26px', height: '26px', borderRadius: '50%', objectFit: 'cover', border: '2px solid rgba(255,255,255,0.7)', flexShrink: 0 }}
+                                                onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+                                            />
+                                            <span style={{ fontSize: '12px', fontWeight: 'bold', whiteSpace: 'nowrap' }}>{player1}</span>
+                                        </div>
+                                    </th>
+                                    {participants.map(player2 => {
+                                        const result = getMatchResult(player1, player2);
+                                        const isSelf = player1 === player2;
+                                        return (
+                                            <td
+                                                key={player2}
+                                                onClick={() => !isSelf && handleCellClick(player1, player2)}
+                                                aria-label={isSelf ? undefined : `${player1} vs ${player2}: ${result === '1' ? 'vittoria' : result === '0' ? 'sconfitta' : 'non giocata'}`}
+                                                style={{
+                                                    width: '52px',
+                                                    height: '52px',
+                                                    textAlign: 'center',
+                                                    verticalAlign: 'middle',
+                                                    borderRadius: '8px',
+                                                    cursor: isSelf ? 'default' : 'pointer',
+                                                    fontSize: '17px',
+                                                    fontWeight: 'bold',
+                                                    userSelect: 'none',
+                                                    transition: 'transform 0.1s, box-shadow 0.1s',
+                                                    background: isSelf
+                                                        ? 'repeating-linear-gradient(45deg,#9e9e9e 0px,#9e9e9e 3px,#bdbdbd 3px,#bdbdbd 9px)'
+                                                        : result === '1' ? '#c8e6c9'
+                                                        : result === '0' ? '#ffcdd2'
+                                                        : '#f5f5f5',
+                                                    color: isSelf ? 'transparent'
+                                                        : result === '1' ? '#1b5e20'
+                                                        : result === '0' ? '#b71c1c'
+                                                        : '#bdbdbd',
+                                                    boxShadow: isSelf ? 'none' : '0 1px 3px rgba(0,0,0,0.15)',
+                                                }}
+                                                onMouseEnter={e => { if (!isSelf) { (e.currentTarget as HTMLElement).style.transform = 'scale(1.1)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 8px rgba(0,0,0,0.2)'; } }}
+                                                onMouseLeave={e => { if (!isSelf) { (e.currentTarget as HTMLElement).style.transform = 'scale(1)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 1px 3px rgba(0,0,0,0.15)'; } }}
+                                            >
+                                                {isSelf ? '' : result === '1' ? 'V' : result === '0' ? 'S' : '—'}
+                                            </td>
+                                        );
+                                    })}
+                                    <td style={{ ...matrixStatCellStyle, background: '#e8f5e9', color: '#1b5e20' }}>
+                                        {stats[player1].wins}
+                                    </td>
+                                    <td style={{ ...matrixStatCellStyle, background: '#ffebee', color: '#b71c1c' }}>
+                                        {stats[player1].losses}
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
                 </div>
             </section>
 
@@ -416,39 +450,40 @@ const TournamentDetail: React.FC = () => {
     );
 };
 
-// Stili
-const cellStyle: React.CSSProperties = {
-    border: '1px solid #ddd',
-    padding: '10px',
+// Stili matrice risultati
+const matrixCornerStyle: React.CSSProperties = {
+    background: '#3949ab',
+    borderRadius: '8px',
+    minWidth: '90px',
+    padding: '6px',
+};
+
+const matrixColHeaderStyle: React.CSSProperties = {
+    background: '#3949ab',
+    color: 'white',
     textAlign: 'center',
+    padding: '8px 4px',
+    borderRadius: '8px',
+    minWidth: '50px',
+    verticalAlign: 'middle',
 };
 
-const headerStyle: React.CSSProperties = {
-    ...cellStyle,
-    backgroundColor: '#2196F3',
+const matrixRowHeaderStyle: React.CSSProperties = {
+    background: '#3949ab',
     color: 'white',
-    fontWeight: 'bold',
+    padding: '6px 8px',
+    borderRadius: '8px',
+    verticalAlign: 'middle',
 };
 
-const rowHeaderStyle: React.CSSProperties = {
-    ...cellStyle,
-    backgroundColor: '#2196F3',
-    color: 'white',
+const matrixStatCellStyle: React.CSSProperties = {
+    textAlign: 'center',
+    verticalAlign: 'middle',
+    borderRadius: '8px',
+    width: '46px',
+    height: '52px',
+    fontSize: '18px',
     fontWeight: 'bold',
-    textAlign: 'left',
-    paddingLeft: '15px',
-};
-
-const totalHeaderStyle: React.CSSProperties = {
-    ...cellStyle,
-    fontWeight: 'bold',
-    textAlign: 'left',
-    paddingLeft: '15px',
-};
-
-const totalCellStyle: React.CSSProperties = {
-    ...cellStyle,
-    fontSize: '16px',
 };
 
 export default TournamentDetail;
